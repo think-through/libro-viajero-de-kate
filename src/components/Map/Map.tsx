@@ -87,23 +87,6 @@ export const Map: React.FC = () => {
                     return name && normalizedNames.includes(normalize(name as string))
                 })
 
-                // Load images for each country to use as fill-pattern
-                await Promise.all(
-                    countries.map((country) => {
-                        if (!country.imageUrl) return Promise.resolve()
-                        return new Promise<void>((resolve) => {
-                            map.loadImage(country.imageUrl, (error, image) => {
-                                if (!error && image) {
-                                    if (!map.hasImage(country.name)) {
-                                        map.addImage(country.name, image)
-                                    }
-                                }
-                                resolve()
-                            })
-                        })
-                    }),
-                )
-
                 map.addSource('countries', {
                     type: 'geojson',
                     data: {
@@ -125,7 +108,7 @@ export const Map: React.FC = () => {
                     type: 'fill',
                     source: 'countries',
                     paint: {
-                        'fill-pattern': ['get', 'normalizedName'],
+                        'fill-color': '#FFE0B2',
                         'fill-opacity': [
                             'interpolate',
                             ['exponential', 1.5],
