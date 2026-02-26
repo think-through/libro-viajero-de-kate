@@ -1,73 +1,64 @@
-# React + TypeScript + Vite
+# Kate's Travel Blog - Webflow Custom Code
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Context for AI Agents
 
-Currently, two official plugins are available:
+- **Role:** This repository manages the "Client-Side Islands" for a
+  Webflow-hosted travel blog.
+- **Goal:** We bypass Webflow's native interactions for complex logic (Maps)
+  and high-performance animations (GSAP), injecting a single optimized bundle
+  into the Webflow site.
+- **Current Phase:** Migrating the "Travel Map" from Vanilla/Leaflet to
+  React/Mapbox GL JS.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+- **Build Tool:** Vite (v7+ Stable) using `TypeScript + SWC`.
+- **Core Framework:** React 18 (Only for complex "Islands").
+- **Styling:** SCSS / CSS Modules (scoped to components).
+- **Animation:** GSAP (for non-React interactions like Carousels).
+- **Maps:** `react-map-gl` (Mapbox GL JS wrapper).
+- **Linting:** ESLint + Prettier.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Architecture: "The Island Model"
 
-```js
-export default defineConfig([
-    globalIgnores(['dist']),
-    {
-        files: ['**/*.{ts,tsx}'],
-        extends: [
-            // Other configs...
+We do **not** control the `<body>` or the Router. Webflow handles the DOM
+structure, SEO, and CMS content. We "hydrate" specific `<div>` containers based
+on their IDs.
 
-            // Remove tseslint.configs.recommended and replace with this
-            tseslint.configs.recommendedTypeChecked,
-            // Alternatively, use this for stricter rules
-            tseslint.configs.strictTypeChecked,
-            // Optionally, add this for stylistic rules
-            tseslint.configs.stylisticTypeChecked,
+### 1. The Traffic Controller (`src/main.tsx`)
 
-            // Other configs...
-        ],
-        languageOptions: {
-            parserOptions: {
-                project: ['./tsconfig.node.json', './tsconfig.app.json'],
-                tsconfigRootDir: import.meta.dirname,
-            },
-            // other options...
-        },
-    },
-])
-```
+This is the entry point. It scans the DOM for specific IDs.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **IF** `#react-travel-map` exists -> Mount the `<TravelMap />` React Root.
+- **IF** `.hero-carousel` exists -> Run the `initCarousel()` Vanilla/GSAP
+  function.
+- **ELSE** -> Do nothing (keep the bundle dormant).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 2. Data Protocol (Webflow CMS -> React)
 
-export default defineConfig([
-    globalIgnores(['dist']),
-    {
-        files: ['**/*.{ts,tsx}'],
-        extends: [
-            // Other configs...
-            // Enable lint rules for React
-            reactX.configs['recommended-typescript'],
-            // Enable lint rules for React DOM
-            reactDom.configs.recommended,
-        ],
-        languageOptions: {
-            parserOptions: {
-                project: ['./tsconfig.node.json', './tsconfig.app.json'],
-                tsconfigRootDir: import.meta.dirname,
-            },
-            // other options...
-        },
-    },
-])
+We do not fetch data via API calls. Data is embedded directly in the HTML by
+Webflow to ensure instant loading.
+
+1.  **Webflow:** Renders a hidden `div` with `data-attributes` containing JSON
+    strings (e.g., `data-places='[{...}]'`).
+2.  **React:** Reads `element.dataset.places`, parses it, and passes it as
+    props.
+3.  **Constraint:** NEVER hardcode content. Always expect data to be injected
+    via DOM attributes.
+
+---
+
+## Directory Structure
+
+```text
+/src
+├── components/          # ⚛️ React Components (Complex Islands)
+├── interactions/        # ⚡ Vanilla/GSAP Scripts (Lightweight)
+├── styles/              # 🎨 Shared SCSS/CSS
+├── main.tsx             # 🚦 Entry Point (Traffic Controller)
+└── vite-env.d.ts        # TypeScript Definitions
 ```
