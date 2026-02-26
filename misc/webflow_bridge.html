@@ -1,0 +1,29 @@
+<!-- Webflow > Site Settings > Custom Code > Footer Code -->
+<script>
+    (function () {
+        const DEV_SCRIPT = 'http://localhost:5173/src/main.tsx';
+        const PROD_SCRIPT = 'https://cdn.your-hosting.com/main.js';
+        const PROD_STYLE = 'https://cdn.your-hosting.com/main.css';
+
+        // Check if localhost is reachable OR assume Dev if on staging domain
+        const isStaging = window.location.hostname.includes('webflow.io');
+
+        if (isStaging) {
+            console.log('🚧 Loading Localhost Script...');
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.src = DEV_SCRIPT;
+            document.body.appendChild(script);
+        } else {
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.src = PROD_SCRIPT;
+            document.body.appendChild(script);
+
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = PROD_STYLE;
+            document.head.appendChild(link);
+        }
+    })();
+</script>
