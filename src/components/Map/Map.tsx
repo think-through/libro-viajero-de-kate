@@ -10,7 +10,7 @@ mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
 
 const MEXICO_CENTER: [number, number] = [-102.5528, 23.6345]
 const COUNTRIES_SOURCE_URL =
-    'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson'
+    import.meta.env.VITE_NATURAL_EARTH_URL + '/ne_50m_admin_0_countries.geojson'
 
 const RESP_ZOOM = {
     mobile: { max: 4, min: 2 },
@@ -80,11 +80,11 @@ export const Map: React.FC = () => {
             axios.get<GeoJsonFeatureCollection>(COUNTRIES_SOURCE_URL).then(async (response) => {
                 const geoData = response.data
                 const normalizedNames = countries.map((c) => c.name)
-                
+
                 // Filter features that match our visited countries
                 const visitedFeatures = geoData.features.filter((f: GeoJsonFeature) => {
-                    const name = f.properties?.name;
-                    return name && normalizedNames.includes(normalize(name as string));
+                    const name = f.properties?.name
+                    return name && normalizedNames.includes(normalize(name as string))
                 })
 
                 // Load images for each country to use as fill-pattern
@@ -109,7 +109,7 @@ export const Map: React.FC = () => {
                     data: {
                         type: 'FeatureCollection',
                         features: visitedFeatures
-                            .filter(f => f.geometry !== null)
+                            .filter((f) => f.geometry !== null)
                             .map((f: GeoJsonFeature) => ({
                                 ...f,
                                 properties: {
