@@ -46,6 +46,8 @@ export function parseMapData() {
         blogPosts.push({
             city: item.getAttribute('data-city') || '',
             slug: item.getAttribute('data-blog-slug') || '',
+            title: item.getAttribute('data-blog-title') || '',
+            image: item.getAttribute('data-blog-image') || '',
         })
     })
 

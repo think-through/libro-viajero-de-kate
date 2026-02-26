@@ -155,15 +155,40 @@ export const Map: React.FC = () => {
                 if (!blog) return
 
                 const el = document.createElement('div')
-                el.className = 'marker-dot'
+                el.className = 'blog-marker'
+                
+                // Create image container
+                const imgContainer = document.createElement('div')
+                imgContainer.className = 'blog-marker-image-container'
+                
+                if (blog.image) {
+                    const img = document.createElement('img')
+                    img.className = 'blog-marker-image'
+                    img.src = blog.image
+                    img.alt = blog.title
+                    imgContainer.appendChild(img)
+                } else {
+                    // Fallback dot if no image
+                    const dot = document.createElement('div')
+                    dot.className = 'marker-dot'
+                    imgContainer.appendChild(dot)
+                }
+                
+                el.appendChild(imgContainer)
 
-                new mapboxgl.Marker(el)
+                // Create title label
+                if (blog.title) {
+                    const title = document.createElement('div')
+                    title.className = 'blog-marker-title'
+                    title.textContent = blog.title
+                    el.appendChild(title)
+                }
+
+                new mapboxgl.Marker({
+                    element: el,
+                    anchor: 'bottom' // Anchors the marker to the coordinate at its bottom
+                })
                     .setLngLat([dest.coords.lng, dest.coords.lat])
-                    .setPopup(
-                        new mapboxgl.Popup({ offset: 25 }).setHTML(
-                            `<h3>${dest.city}, ${dest.country}</h3>`,
-                        ),
-                    )
                     .addTo(map)
 
                 el.addEventListener('click', () => {

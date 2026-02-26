@@ -20,4 +20,6 @@ export interface Destination {
 export interface BlogPost {
     city: string
     slug: string
+    title: string
+    image: string
 }
