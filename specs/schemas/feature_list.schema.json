@@ -1,0 +1,45 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Agent Feature List",
+    "description": "A schema for the long-running agent feature tracking list.",
+    "type": "object",
+    "properties": {
+        "features": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Unique identifier for the feature."
+                    },
+                    "feature": {
+                        "type": "string",
+                        "description": "Short name of the feature."
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": ["pending", "passing", "failing", "skipped"],
+                        "description": "Current state of the feature."
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Detailed explanation of requirements."
+                    },
+                    "test_cmd": {
+                        "type": "string",
+                        "description": "The exact shell command to verify this specific feature."
+                    }
+                },
+                "required": ["id", "feature", "status", "description", "test_cmd"],
+                "additionalProperties": false
+            }
+        },
+        "current_status": {
+            "type": "string",
+            "enum": ["idle", "active"]
+        }
+    },
+    "required": ["features", "current_status"],
+    "additionalProperties": false
+}
