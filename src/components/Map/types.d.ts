@@ -21,3 +21,17 @@ export interface BlogPost {
     city: string
     slug: string
 }
+
+export interface GeoJsonFeature {
+    type: 'Feature'
+    properties: {
+        name: string
+        [key: string]: any
+    }
+    geometry: any
+}
+
+export interface GeoJsonCollection {
+    type: 'FeatureCollection'
+    features: GeoJsonFeature[]
+}

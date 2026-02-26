@@ -4,6 +4,7 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import '../styles/Map.css'
 import { parseMapData, getCurrentCountry } from './mapData'
+import type { GeoJsonCollection, GeoJsonFeature } from './types'
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
 
@@ -72,7 +73,7 @@ export const Map: React.FC = () => {
             map.addControl(new mapboxgl.NavigationControl(), 'bottom-left')
 
             // 1. Add Ocean Layer
-            axios.get(OCEAN_SOURCE_URL).then((response) => {
+            axios.get<GeoJsonCollection>(OCEAN_SOURCE_URL).then((response) => {
                 const data = response.data
                 map.addSource('ocean', { type: 'geojson', data })
                 map.addLayer({
@@ -87,10 +88,10 @@ export const Map: React.FC = () => {
             })
 
             // 2. Add Countries Layer
-            axios.get(COUNTRIES_SOURCE_URL).then(async (response) => {
+            axios.get<GeoJsonCollection>(COUNTRIES_SOURCE_URL).then(async (response) => {
                 const geoData = response.data
                 const normalizedNames = countries.map((c) => c.name)
-                const visitedFeatures = geoData.features.filter((f: any) =>
+                const visitedFeatures = geoData.features.filter((f: GeoJsonFeature) =>
                     normalizedNames.includes(normalize(f.properties.name)),
                 )
 
@@ -111,21 +112,20 @@ export const Map: React.FC = () => {
                     }),
                 )
 
-                map.addSource('countries', {
-                    type: 'geojson',
-                    data: {
-                        type: 'FeatureCollection',
-                        features: visitedFeatures.map((f: any) => ({
-                            ...f,
-                            properties: {
-                                ...f.properties,
-                                normalizedName: normalize(f.properties.name),
-                            },
-                        })),
-                    },
-                })
-
-                map.addLayer({
+                                    map.addSource('countries', {
+                                        type: 'geojson',
+                                        data: {
+                                            type: 'FeatureCollection',
+                                            features: visitedFeatures.map((f: GeoJsonFeature) => ({
+                                                ...f,
+                                                properties: {
+                                                    ...f.properties,
+                                                    normalizedName: normalize(f.properties.name),
+                                                },
+                                            })),
+                                        },
+                                    })
+                                map.addLayer({
                     id: 'countries-layer',
                     type: 'fill',
                     source: 'countries',
