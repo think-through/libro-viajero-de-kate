@@ -22,16 +22,31 @@ export interface BlogPost {
     slug: string
 }
 
-export interface GeoJsonFeature {
+type Position = [number, number] | [number, number, number]
+
+type BoundingBox =
+    | [number, number, number, number]
+    | [number, number, number, number, number, number]
+
+type Geometry =
+    | { type: 'Point'; coordinates: Position }
+    | { type: 'MultiPoint'; coordinates: Position[] }
+    | { type: 'LineString'; coordinates: Position[] }
+    | { type: 'MultiLineString'; coordinates: Position[][] }
+    | { type: 'Polygon'; coordinates: Position[][] }
+    | { type: 'MultiPolygon'; coordinates: Position[][][] }
+    | { type: 'GeometryCollection'; geometries: Geometry[] }
+
+export interface GeoJsonFeature<P = Record<string, unknown>> {
     type: 'Feature'
-    properties: {
-        name: string
-        [key: string]: any
-    }
-    geometry: any
+    geometry: Geometry | null
+    properties: P | null
+    id?: string | number
+    bbox?: BoundingBox
 }
 
-export interface GeoJsonCollection {
+export interface GeoJsonFeatureCollection<P = Record<string, unknown>> {
     type: 'FeatureCollection'
-    features: GeoJsonFeature[]
+    features: GeoJsonFeature<P>[]
+    bbox?: BoundingBox
 }

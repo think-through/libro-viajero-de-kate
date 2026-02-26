@@ -4,13 +4,11 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import '../styles/Map.css'
 import { parseMapData, getCurrentCountry } from './mapData'
-import type { GeoJsonCollection, GeoJsonFeature } from './types'
+import type { GeoJsonFeatureCollection, GeoJsonFeature } from './types'
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
 
 const MEXICO_CENTER: [number, number] = [-102.5528, 23.6345]
-const OCEAN_SOURCE_URL =
-    'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_ocean.geojson'
 const COUNTRIES_SOURCE_URL =
     'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson'
 
@@ -72,30 +70,24 @@ export const Map: React.FC = () => {
         map.on('load', () => {
             map.addControl(new mapboxgl.NavigationControl(), 'bottom-left')
 
-            // 1. Add Ocean Layer
-            axios.get<GeoJsonCollection>(OCEAN_SOURCE_URL).then((response) => {
-                const data = response.data
-                map.addSource('ocean', { type: 'geojson', data })
-                map.addLayer({
-                    id: 'ocean-layer',
-                    type: 'fill',
-                    source: 'ocean',
-                    paint: {
-                        'fill-color': '#B4BEE4',
-                        'fill-opacity': 0.6,
-                    },
-                })
-            })
+            // 1. Style existing Water Layer
+            if (map.getLayer('water')) {
+                map.setPaintProperty('water', 'fill-color', '#B4BEE4')
+                map.setPaintProperty('water', 'fill-opacity', 0.8)
+            }
 
             // 2. Add Countries Layer
-            axios.get<GeoJsonCollection>(COUNTRIES_SOURCE_URL).then(async (response) => {
+            axios.get<GeoJsonFeatureCollection>(COUNTRIES_SOURCE_URL).then(async (response) => {
                 const geoData = response.data
                 const normalizedNames = countries.map((c) => c.name)
-                const visitedFeatures = geoData.features.filter((f: GeoJsonFeature) =>
-                    normalizedNames.includes(normalize(f.properties.name)),
-                )
+                
+                // Filter features that match our visited countries
+                const visitedFeatures = geoData.features.filter((f: GeoJsonFeature) => {
+                    const name = f.properties?.name;
+                    return name && normalizedNames.includes(normalize(name as string));
+                })
 
-                // Load images for each country
+                // Load images for each country to use as fill-pattern
                 await Promise.all(
                     countries.map((country) => {
                         if (!country.imageUrl) return Promise.resolve()
@@ -112,20 +104,23 @@ export const Map: React.FC = () => {
                     }),
                 )
 
-                                    map.addSource('countries', {
-                                        type: 'geojson',
-                                        data: {
-                                            type: 'FeatureCollection',
-                                            features: visitedFeatures.map((f: GeoJsonFeature) => ({
-                                                ...f,
-                                                properties: {
-                                                    ...f.properties,
-                                                    normalizedName: normalize(f.properties.name),
-                                                },
-                                            })),
-                                        },
-                                    })
-                                map.addLayer({
+                map.addSource('countries', {
+                    type: 'geojson',
+                    data: {
+                        type: 'FeatureCollection',
+                        features: visitedFeatures
+                            .filter(f => f.geometry !== null)
+                            .map((f: GeoJsonFeature) => ({
+                                ...f,
+                                properties: {
+                                    ...f.properties,
+                                    normalizedName: normalize(f.properties?.name as string),
+                                },
+                            })) as any[],
+                    },
+                })
+
+                map.addLayer({
                     id: 'countries-layer',
                     type: 'fill',
                     source: 'countries',
