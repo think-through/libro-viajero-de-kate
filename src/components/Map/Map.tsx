@@ -154,13 +154,14 @@ export const Map: React.FC = () => {
                 const blog = blogPosts.find((b) => b.city === dest.city)
                 if (!blog) return
 
+                console.log('blog: ', blog)
+
                 const el = document.createElement('div')
                 el.className = 'blog-marker'
-                
-                // Create image container
+
                 const imgContainer = document.createElement('div')
                 imgContainer.className = 'blog-marker-image-container'
-                
+
                 if (blog.image) {
                     const img = document.createElement('img')
                     img.className = 'blog-marker-image'
@@ -168,15 +169,13 @@ export const Map: React.FC = () => {
                     img.alt = blog.title
                     imgContainer.appendChild(img)
                 } else {
-                    // Fallback dot if no image
                     const dot = document.createElement('div')
                     dot.className = 'marker-dot'
                     imgContainer.appendChild(dot)
                 }
-                
+
                 el.appendChild(imgContainer)
 
-                // Create title label
                 if (blog.title) {
                     const title = document.createElement('div')
                     title.className = 'blog-marker-title'
@@ -186,7 +185,7 @@ export const Map: React.FC = () => {
 
                 new mapboxgl.Marker({
                     element: el,
-                    anchor: 'bottom' // Anchors the marker to the coordinate at its bottom
+                    anchor: 'bottom',
                 })
                     .setLngLat([dest.coords.lng, dest.coords.lat])
                     .addTo(map)
