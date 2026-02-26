@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import axios from 'axios'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import '../styles/Map.css'
@@ -7,6 +8,10 @@ import { parseMapData, getCurrentCountry } from './mapData'
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
 
 const MEXICO_CENTER: [number, number] = [-102.5528, 23.6345]
+const OCEAN_SOURCE_URL =
+    'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_ocean.geojson'
+const COUNTRIES_SOURCE_URL =
+    'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson'
 
 const RESP_ZOOM = {
     mobile: { max: 4, min: 2 },
@@ -67,108 +72,104 @@ export const Map: React.FC = () => {
             map.addControl(new mapboxgl.NavigationControl(), 'bottom-left')
 
             // 1. Add Ocean Layer
-            fetch('https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_ocean.geojson')
-                .then((r) => r.json())
-                .then((data) => {
-                    map.addSource('ocean', { type: 'geojson', data })
-                    map.addLayer({
-                        id: 'ocean-layer',
-                        type: 'fill',
-                        source: 'ocean',
-                        paint: {
-                            'fill-color': '#B4BEE4',
-                            'fill-opacity': 0.6,
-                        },
-                    })
+            axios.get(OCEAN_SOURCE_URL).then((response) => {
+                const data = response.data
+                map.addSource('ocean', { type: 'geojson', data })
+                map.addLayer({
+                    id: 'ocean-layer',
+                    type: 'fill',
+                    source: 'ocean',
+                    paint: {
+                        'fill-color': '#B4BEE4',
+                        'fill-opacity': 0.6,
+                    },
                 })
+            })
 
             // 2. Add Countries Layer
-            fetch(
-                'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson',
-            )
-                .then((r) => r.json())
-                .then(async (geoData) => {
-                    const normalizedNames = countries.map((c) => c.name)
-                    const visitedFeatures = geoData.features.filter((f: any) =>
-                        normalizedNames.includes(normalize(f.properties.name)),
-                    )
+            axios.get(COUNTRIES_SOURCE_URL).then(async (response) => {
+                const geoData = response.data
+                const normalizedNames = countries.map((c) => c.name)
+                const visitedFeatures = geoData.features.filter((f: any) =>
+                    normalizedNames.includes(normalize(f.properties.name)),
+                )
 
-                    // Load images for each country
-                    await Promise.all(
-                        countries.map((country) => {
-                            if (!country.imageUrl) return Promise.resolve()
-                            return new Promise<void>((resolve) => {
-                                map.loadImage(country.imageUrl, (error, image) => {
-                                    if (!error && image) {
-                                        if (!map.hasImage(country.name)) {
-                                            map.addImage(country.name, image)
-                                        }
+                // Load images for each country
+                await Promise.all(
+                    countries.map((country) => {
+                        if (!country.imageUrl) return Promise.resolve()
+                        return new Promise<void>((resolve) => {
+                            map.loadImage(country.imageUrl, (error, image) => {
+                                if (!error && image) {
+                                    if (!map.hasImage(country.name)) {
+                                        map.addImage(country.name, image)
                                     }
-                                    resolve()
-                                })
+                                }
+                                resolve()
                             })
-                        }),
-                    )
+                        })
+                    }),
+                )
 
-                    map.addSource('countries', {
-                        type: 'geojson',
-                        data: {
-                            type: 'FeatureCollection',
-                            features: visitedFeatures.map((f: any) => ({
-                                ...f,
-                                properties: {
-                                    ...f.properties,
-                                    normalizedName: normalize(f.properties.name),
-                                },
-                            })),
-                        },
-                    })
+                map.addSource('countries', {
+                    type: 'geojson',
+                    data: {
+                        type: 'FeatureCollection',
+                        features: visitedFeatures.map((f: any) => ({
+                            ...f,
+                            properties: {
+                                ...f.properties,
+                                normalizedName: normalize(f.properties.name),
+                            },
+                        })),
+                    },
+                })
 
-                    map.addLayer({
-                        id: 'countries-layer',
-                        type: 'fill',
-                        source: 'countries',
-                        paint: {
-                            'fill-pattern': ['get', 'normalizedName'],
-                            'fill-opacity': [
-                                'interpolate',
-                                ['exponential', 1.5],
-                                ['zoom'],
-                                3,
-                                0.8,
-                                7,
-                                0.2,
-                            ],
-                        },
-                    })
+                map.addLayer({
+                    id: 'countries-layer',
+                    type: 'fill',
+                    source: 'countries',
+                    paint: {
+                        'fill-pattern': ['get', 'normalizedName'],
+                        'fill-opacity': [
+                            'interpolate',
+                            ['exponential', 1.5],
+                            ['zoom'],
+                            3,
+                            0.8,
+                            7,
+                            0.2,
+                        ],
+                    },
+                })
 
-                    // Handle Country Clicks
-                    map.on('click', 'countries-layer', (e) => {
-                        if (e.features && e.features[0]) {
-                            const name = e.features[0].properties?.normalizedName
-                            const country = countries.find((c) => c.name === name)
-                            if (country) {
-                                window.location.href = `/paises/${country.slug}`
-                            }
+                // Handle Country Clicks
+                map.on('click', 'countries-layer', (e) => {
+                    if (e.features && e.features[0]) {
+                        const name = e.features[0].properties?.normalizedName
+                        const country = countries.find((c) => c.name === name)
+                        if (country) {
+                            window.location.href = `/paises/${country.slug}`
                         }
-                    })
-
-                    map.on('mouseenter', 'countries-layer', () => {
-                        map.getCanvas().style.cursor = 'pointer'
-                    })
-                    map.on('mouseleave', 'countries-layer', () => {
-                        map.getCanvas().style.cursor = ''
-                    })
-
-                    const current = getCurrentCountry(countries)
-                    if (current) {
-                        if (current.coords) {
-                            focusCountryResponsive(map, [current.coords.lng, current.coords.lat])
-                        }
-                    } else {
-                        focusCountryResponsive(map, MEXICO_CENTER)
                     }
                 })
+
+                map.on('mouseenter', 'countries-layer', () => {
+                    map.getCanvas().style.cursor = 'pointer'
+                })
+                map.on('mouseleave', 'countries-layer', () => {
+                    map.getCanvas().style.cursor = ''
+                })
+
+                const current = getCurrentCountry(countries)
+                if (current) {
+                    if (current.coords) {
+                        focusCountryResponsive(map, [current.coords.lng, current.coords.lat])
+                    }
+                } else {
+                    focusCountryResponsive(map, MEXICO_CENTER)
+                }
+            })
 
             // 3. Add Destination Markers
             destinations.forEach((dest) => {
