@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import axios from 'axios'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import '../styles/Map.css'
+import '../../styles/Map.css'
 import { parseMapData, getCurrentCountry } from './mapData'
 import type { GeoJsonFeatureCollection, GeoJsonFeature } from './types'
 
