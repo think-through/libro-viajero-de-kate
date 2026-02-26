@@ -1,0 +1,30 @@
+.custom-orange-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-dot {
+  width: 15px;
+  height: 15px;
+  background-color: #ff9900;
+  border: 2px solid #ff9900;
+  border-radius: 50%;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.marker-dot:hover {
+  transform: scale(1.2);
+}
+
+.mapboxgl-popup-content {
+  padding: 10px;
+  border-radius: 8px;
+  font-family: sans-serif;
+}
+
+.mapboxgl-popup-close-button {
+  padding: 4px;
+}
