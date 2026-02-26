@@ -64,3 +64,36 @@ Webflow to ensure instant loading.
 ├── main.tsx             # 🚦 Entry Point (Traffic Controller)
 └── vite-env.d.ts        # TypeScript Definitions
 ```
+
+## Active Feature: The Travel Map
+
+**Status:** In Progress (Migration from Leaflet -> Mapbox).
+
+**Requirements:**
+
+1. **Library:** Use `react-map-gl` with Mapbox standard style.
+2. **Visuals:** Highlight visited countries with a flat color fill.
+    - DEPRECATED: Do not attempt to mask images inside country shapes (old Leaflet behavior).
+    - Use circular markers for cities.
+
+3. **Interactivity:**
+    - Click City Marker -> Show Popup with "Read Post" link.
+    - Hover Country -> Slight opacity change.
+
+4. **Data Source:**
+    - Visited Countries: Passed via data-visited (Array of strings).
+    - Destinations: Passed via data-destinations (Array of objects with lat/lng).
+
+## Development Workflow
+
+1. **Local Dev (HMR):** Run `npm run dev`.
+    - A "Split Environment" script in Webflow loads `localhost:5173/src/main.tsx` when it detects the `.webflow.io` domain.
+
+2. **Production Build:** Run `npm run build`.
+    - Vite outputs a hashed/unhashed main.js to `/dist`.
+    - Upload to CDN.
+    - Webflow production uses the CDN URL.
+
+3. **TypeScript Rules:**
+    - Strict Mode: ON.
+    - Define Interfaces for all Webflow CMS data structures (no any types allowed).
