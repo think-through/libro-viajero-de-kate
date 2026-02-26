@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 import axios from 'axios'
 import mapboxgl from 'mapbox-gl'
+import type { Feature, FeatureCollection } from 'geojson'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import '../../styles/Map.css'
 import { parseMapData, getCurrentCountry } from './mapData'
-import type { GeoJsonFeatureCollection, GeoJsonFeature } from './types'
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN
 
@@ -77,12 +77,12 @@ export const Map: React.FC = () => {
             }
 
             // 2. Add Countries Layer
-            axios.get<GeoJsonFeatureCollection>(COUNTRIES_SOURCE_URL).then(async (response) => {
+            axios.get<FeatureCollection>(COUNTRIES_SOURCE_URL).then(async (response) => {
                 const geoData = response.data
                 const normalizedNames = countries.map((c) => c.name)
 
                 // Filter features that match our visited countries
-                const visitedFeatures = geoData.features.filter((f: GeoJsonFeature) => {
+                const visitedFeatures = geoData.features.filter((f: Feature) => {
                     const name = f.properties?.name
                     return name && normalizedNames.includes(normalize(name as string))
                 })
@@ -93,13 +93,13 @@ export const Map: React.FC = () => {
                         type: 'FeatureCollection',
                         features: visitedFeatures
                             .filter((f) => f.geometry !== null)
-                            .map((f: GeoJsonFeature) => ({
+                            .map((f: Feature) => ({
                                 ...f,
                                 properties: {
                                     ...f.properties,
                                     normalizedName: normalize(f.properties?.name as string),
                                 },
-                            })) as any[],
+                            })),
                     },
                 })
 
