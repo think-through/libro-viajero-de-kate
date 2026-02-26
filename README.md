@@ -55,6 +55,8 @@ Webflow to ensure instant loading.
 ## Directory Structure
 
 ```text
+/misc                    # Not Deployed Static Scripts (kept for source control)
+└── webflow_bridge.html  # Webflow Integration Script (Webflow's Footer Code)
 /src
 ├── components/          # ⚛️ React Components (Complex Islands)
 ├── interactions/        # ⚡ Vanilla/GSAP Scripts (Lightweight)
