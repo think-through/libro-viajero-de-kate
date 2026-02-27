@@ -1,8 +1,8 @@
 # 🟢 CURRENT STATE [2026-02-26]
 
-**Goal:** Fix image data binding and marker drag lag.
-**Outcome:** Updated `mapData.ts` to fallback to searching for an `<img>` tag inside the data source elements. This allows Webflow users to bind images directly to hidden elements. Refined `Map.css` to remove base transitions from markers, which eliminates the perceived "lag" during map movement.
-**Handoff:** Ready for final testing in Webflow.
+**Goal:** Design CI/CD pipeline for GitHub Pages.
+**Outcome:** Created `.github/workflows/deploy.yml` to automate the build and deployment process. The pipeline handles production secrets and uploads the `dist/` artifacts to GitHub Pages.
+**Handoff:** Configure the `MAPBOX_TOKEN` secret on GitHub and set the Pages source to "GitHub Actions" to enable automatic deployments.
 
 ---
 
@@ -10,21 +10,7 @@
 
 # 🟢 CURRENT STATE [2026-02-26]
 
-**Goal:** Refactor markers to show blog post title and image.
-**Outcome:** Updated `types.d.ts` and `mapData.ts` to support blog post images and titles. Redesigned markers in `Map.tsx` and `Map.css` to use a "floating circle" aesthetic with high-quality styling. Markers now include the hero image and a title label, providing a rich preview of the content.
-**Handoff:** Markers are visually enhanced and performant.
-
----
-
-# 📜 PREVIOUS HISTORY
-
-# 🟢 CURRENT STATE [2026-02-26]
-
-**Goal:** Clean up types and finalize Map component.
-**Outcome:** Replaced custom GeoJSON interfaces with native `@types/geojson` (imported as `Feature` and `FeatureCollection`). Removed redundant types from `src/components/Map/types.d.ts`. All linter errors resolved without using `as any`.
-**Handoff:** Project is in a clean, production-ready state.
-
----
-
-# RALPH AGENT LOG
-No history yet.
+**Goal:** Prepare for production deployment.
+**Outcome:** Verified the production build process (`npm run build`). Confirmed that environment variables (`VITE_MAPBOX_TOKEN`, `VITE_NATURAL_EARTH_URL`) are correctly handled and baked into the bundle. Created a deployment guide covering CDN hosting and Webflow integration.
+**Handoff:** The project is ready for production deployment. Follow the "Production Deployment Guide" provided in the session.
+...
