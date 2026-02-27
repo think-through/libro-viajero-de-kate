@@ -1,4 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Map } from './components/Map/Map'
 
-createRoot(document.getElementById('root')!).render(<StrictMode></StrictMode>)
+const mapRoot = document.getElementById('map-root')
+
+if (mapRoot) {
+    createRoot(mapRoot).render(
+        <StrictMode>
+            <Map />
+        </StrictMode>,
+    )
+}

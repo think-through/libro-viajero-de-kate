@@ -5,11 +5,24 @@
         const PROD_SCRIPT = 'https://cdn.your-hosting.com/main.js';
         const PROD_STYLE = 'https://cdn.your-hosting.com/main.css';
 
-        // Check if localhost is reachable OR assume Dev if on staging domain
         const isStaging = window.location.hostname.includes('webflow.io');
 
         if (isStaging) {
-            console.log('🚧 Loading Localhost Script...');
+            console.log('🚧 Loading Localhost Script with Preamble...');
+
+            const preamble = document.createElement('script');
+
+            preamble.type = 'module';
+            preamble.text = `
+                import RefreshRuntime from 'http://localhost:5173/@react-refresh'
+                RefreshRuntime.injectIntoGlobalHook(window)
+                window.$RefreshReg$ = () => {}
+                window.$RefreshSig$ = () => (type) => type
+                window.__vite_plugin_react_preamble_installed__ = true
+            `;
+
+            document.head.appendChild(preamble);
+
             const script = document.createElement('script');
             script.type = 'module';
             script.src = DEV_SCRIPT;

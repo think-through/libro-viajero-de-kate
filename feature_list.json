@@ -1,1 +1,11 @@
-{ "features": [], "current_status": "idle" }
+{
+  "features": [
+    {
+      "name": "Map Component Migration",
+      "description": "Migrate Leaflet map to Mapbox GL JS in React/TypeScript, maintaining country textures, markers, and responsive behavior.",
+      "status": "passing",
+      "test_command": "npm run build"
+    }
+  ],
+  "current_status": "Ready for Production"
+}
