@@ -55,13 +55,13 @@ Webflow to ensure instant loading.
 ## Directory Structure
 
 ```text
-/misc                    # Not Deployed Static Scripts (kept for source control)
-└── webflow_bridge.html  # Webflow Integration Script (Webflow's Footer Code)
+/public                  # Static Scripts
+└── loader.js            # Webflow Integration Script (Webflow's Footer Code)
 /src
-├── components/          # ⚛️ React Components (Complex Islands)
-├── interactions/        # ⚡ Vanilla/GSAP Scripts (Lightweight)
-├── styles/              # 🎨 Shared SCSS/CSS
-├── main.tsx             # 🚦 Entry Point (Traffic Controller)
+├── components/          # React Components (Complex Islands)
+├── interactions/        # Vanilla/GSAP Scripts (Lightweight)
+├── styles/              # Shared SCSS/CSS
+├── main.tsx             # Entry Point (Traffic Controller)
 └── vite-env.d.ts        # TypeScript Definitions
 ```
 
