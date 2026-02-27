@@ -154,8 +154,6 @@ export const Map: React.FC = () => {
                 const blog = blogPosts.find((b) => b.city === dest.city)
                 if (!blog) return
 
-                console.log('blog: ', blog)
-
                 const el = document.createElement('div')
                 el.className = 'blog-marker'
 
