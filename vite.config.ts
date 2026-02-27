@@ -7,6 +7,7 @@ export default defineConfig({
     server: {
         cors: true,
     },
+    base: '/libro-viajero-de-kate/',
     build: {
         outDir: 'dist',
         emptyOutDir: true,
