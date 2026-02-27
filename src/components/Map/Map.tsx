@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import mapboxgl from 'mapbox-gl'
 import type { Feature, FeatureCollection } from 'geojson'
@@ -13,9 +13,9 @@ const COUNTRIES_SOURCE_URL =
     import.meta.env.VITE_NATURAL_EARTH_URL + '/ne_50m_admin_0_countries.geojson'
 
 const RESP_ZOOM = {
-    mobile: { max: 4, min: 2 },
-    tablet: { max: 4, min: 2 },
-    desktop: { max: 4, min: 2 },
+    mobile: { max: 3, min: 2 },
+    tablet: { max: 2, min: 2 },
+    desktop: { max: 2, min: 2 },
 }
 
 const getBreakpoint = () => {
@@ -35,6 +35,7 @@ const normalize = (str: string | null) =>
 export const Map: React.FC = () => {
     const mapContainerRef = useRef<HTMLDivElement>(null)
     const mapRef = useRef<mapboxgl.Map | null>(null)
+    const [isVisible, setIsVisible] = useState(false)
 
     const focusCountryResponsive = (map: mapboxgl.Map, center: [number, number], offset = 0) => {
         const bp = getBreakpoint()
@@ -53,14 +54,31 @@ export const Map: React.FC = () => {
     useEffect(() => {
         if (!mapContainerRef.current) return
 
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true)
+                    observer.disconnect()
+                }
+            },
+            { threshold: 0.1 },
+        )
+
+        observer.observe(mapContainerRef.current)
+        return () => observer.disconnect()
+    }, [])
+
+    useEffect(() => {
+        if (!isVisible || !mapContainerRef.current) return
+
         const { countries, destinations, blogPosts } = parseMapData()
 
         const map = new mapboxgl.Map({
             container: mapContainerRef.current,
             style: 'mapbox://styles/mapbox/light-v11',
-            center: [0, 20],
-            zoom: 3.3,
-            minZoom: 3,
+            center: MEXICO_CENTER,
+            zoom: 1,
+            minZoom: 1,
             maxZoom: 13,
             renderWorldCopies: false,
         })
@@ -70,18 +88,15 @@ export const Map: React.FC = () => {
         map.on('load', () => {
             map.addControl(new mapboxgl.NavigationControl(), 'bottom-left')
 
-            // 1. Style existing Water Layer
             if (map.getLayer('water')) {
                 map.setPaintProperty('water', 'fill-color', '#B4BEE4')
                 map.setPaintProperty('water', 'fill-opacity', 0.8)
             }
 
-            // 2. Add Countries Layer
             axios.get<FeatureCollection>(COUNTRIES_SOURCE_URL).then(async (response) => {
                 const geoData = response.data
                 const normalizedNames = countries.map((c) => c.name)
 
-                // Filter features that match our visited countries
                 const visitedFeatures = geoData.features.filter((f: Feature) => {
                     const name = f.properties?.name
                     return name && normalizedNames.includes(normalize(name as string))
@@ -121,7 +136,6 @@ export const Map: React.FC = () => {
                     },
                 })
 
-                // Handle Country Clicks
                 map.on('click', 'countries-layer', (e) => {
                     if (e.features && e.features[0]) {
                         const name = e.features[0].properties?.normalizedName
@@ -149,7 +163,6 @@ export const Map: React.FC = () => {
                 }
             })
 
-            // 3. Add Destination Markers
             destinations.forEach((dest) => {
                 const blog = blogPosts.find((b) => b.city === dest.city)
                 if (!blog) return
@@ -213,7 +226,7 @@ export const Map: React.FC = () => {
                 mapRef.current.remove()
             }
         }
-    }, [])
+    }, [isVisible])
 
     return (
         <div
