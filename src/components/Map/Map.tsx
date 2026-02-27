@@ -14,8 +14,8 @@ const COUNTRIES_SOURCE_URL =
 
 const RESP_ZOOM = {
     mobile: { max: 3, min: 2 },
-    tablet: { max: 2, min: 2 },
-    desktop: { max: 2, min: 2 },
+    tablet: { max: 2, min: 1 },
+    desktop: { max: 4, min: 1 },
 }
 
 const getBreakpoint = () => {
