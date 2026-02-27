@@ -1,7 +1,7 @@
 ;(function () {
     const CONFIG = {
         REPO_URL: 'https://think-through.github.io/libro-viajero-de-kate',
-        DEV_SERVER: 'http://localhost:5173',
+        DEV_SERVER: 'http://localhost:5173/libro-viajero-de-kate',
     }
 
     const isLocalDev =
