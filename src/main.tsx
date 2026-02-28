@@ -6,6 +6,7 @@
 
 const hydrateIslands = async () => {
     // 1. React Islands (Map)
+
     const mapRoot = document.getElementById('map-root')
     if (mapRoot) {
         const [{ StrictMode }, { createRoot }, { Map }] = await Promise.all([
@@ -22,10 +23,17 @@ const hydrateIslands = async () => {
     }
 
     // 2. Vanilla Interactions (Swiper)
-    const swiperContainer = document.querySelector('.swiper.swiper-destinations')
-    if (swiperContainer instanceof HTMLElement) {
+
+    const swiperDestinationsContainer = document.querySelector('.swiper.swiper-destinations')
+    if (swiperDestinationsContainer instanceof HTMLElement) {
         const { initDestinationSwiper } = await import('./interactions/swiperDestinations')
-        initDestinationSwiper(swiperContainer)
+        initDestinationSwiper(swiperDestinationsContainer)
+    }
+
+    const swiperLatestPostsContainer = document.querySelector('.swiper.tr-wrap')
+    if (swiperLatestPostsContainer instanceof HTMLElement) {
+        const { initLatestPostsSwiper } = await import('./interactions/swiperLatestPosts')
+        initLatestPostsSwiper(swiperLatestPostsContainer)
     }
 }
 
