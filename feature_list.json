@@ -5,7 +5,13 @@
             "description": "Migrate Leaflet map to Mapbox GL JS in React/TypeScript, maintaining country textures, markers, and responsive behavior.",
             "status": "passing",
             "test_command": "npm run build"
+        },
+        {
+            "name": "Swiper Destinations Refactor",
+            "description": "Refactor legacy Vanilla JS Swiper into a strict TypeScript module without React, preserving custom rotation and loop logic.",
+            "status": "passing",
+            "test_command": "npm run type-check"
         }
     ],
-    "current_status": "Ready for Production"
+    "current_status": "Swiper Refactor Complete"
 }
