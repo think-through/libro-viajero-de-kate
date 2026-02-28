@@ -36,8 +36,7 @@
             }
         },
         "current_status": {
-            "type": "string",
-            "enum": ["idle", "active"]
+            "type": "string"
         }
     },
     "required": ["features", "current_status"],
