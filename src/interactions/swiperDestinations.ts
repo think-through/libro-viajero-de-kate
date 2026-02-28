@@ -104,7 +104,7 @@ export const initDestinationSwiper = (container: HTMLElement) => {
         },
         breakpoints: {
             0: {
-                slidesPerView: 1.5,
+                slidesPerView: 1,
                 spaceBetween: 60,
             },
             768: {
