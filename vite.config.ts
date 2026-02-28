@@ -14,9 +14,12 @@ export default defineConfig({
         rollupOptions: {
             input: 'src/main.tsx',
             output: {
-                entryFileNames: 'main.js',
-                assetFileNames: 'main.[ext]',
                 format: 'es',
+                manualChunks: {
+                    vendor_mapbox: ['mapbox-gl'],
+                    vendor_swiper: ['swiper'],
+                    vendor_react: ['react', 'react-dom'],
+                },
             },
         },
     },
