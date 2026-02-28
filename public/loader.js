@@ -17,9 +17,26 @@
             return
         }
 
-        console.log(`Loading from GitHub Pages (${isStaging ? 'Staging' : 'Production'}).`)
-        injectLink(`${CONFIG.REPO_URL}/main.css`)
-        injectScript(`${CONFIG.REPO_URL}/main.js`, 'module')
+        console.log(`Loading from CDN (${isStaging ? 'Staging' : 'Production'}).`)
+
+        try {
+            const manifestUrl = `${CONFIG.REPO_URL}/.vite/manifest.json?v=${Date.now()}`
+            const response = await fetch(manifestUrl)
+            const manifest = await response.json()
+
+            const entry = manifest['src/main.tsx']
+            if (!entry) throw new Error('Main entry not found in manifest.')
+
+            if (entry.css && entry.css.length > 0) {
+                entry.css.forEach((cssFile) => {
+                    injectLink(`${CONFIG.REPO_URL}/${cssFile}`)
+                })
+            }
+
+            injectScript(`${CONFIG.REPO_URL}/${entry.file}`, 'module')
+        } catch (err) {
+            console.error('Failed to load hashed assets from manifest:', err)
+        }
     }
 
     function injectVitePreamble() {

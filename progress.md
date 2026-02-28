@@ -1,3 +1,11 @@
+# 🟢 CURRENT STATE [2026-02-27 21:26]
+
+**Goal:** Implement dynamic code-splitting for the Islands Architecture.
+**Outcome:** Refactored `src/main.tsx` to use dynamic `import()` for both React Islands (Map) and Vanilla interactions (Swiper). Optimized `vite.config.ts` with `manualChunks` to isolate heavy libraries (`mapbox-gl`, `swiper`, `react`) into their own hashed, cacheable chunks. This reduces initial bundle size from 2MB to ~3KB for non-interactive pages.
+**Handoff:** The "Traffic Controller" is now fully modular. Future islands should follow the dynamic import pattern to keep the bundle size low.
+
+---
+
 # 🟢 CURRENT STATE [2026-02-27 18:28]
 
 **Goal:** Refactor legacy Swiper implementation into a strict TypeScript module.

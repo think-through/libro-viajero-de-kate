@@ -11,7 +11,13 @@
             "description": "Refactor legacy Vanilla JS Swiper into a strict TypeScript module without React, preserving custom rotation and loop logic.",
             "status": "passing",
             "test_command": "npm run type-check"
+        },
+        {
+            "name": "Performance: Island Code-Splitting",
+            "description": "Implement dynamic imports and manual chunking to ensure Mapbox, React, and Swiper libraries are only loaded on demand.",
+            "status": "passing",
+            "test_command": "npm run build"
         }
     ],
-    "current_status": "Swiper Refactor Complete"
+    "current_status": "Island Code-Splitting Implemented"
 }
