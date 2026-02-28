@@ -56,7 +56,10 @@ const addEventListenerToSlides = (container: HTMLElement) => {
 
     const slides = wrapper.querySelectorAll('.swiper-slide')
     slides.forEach((slide) => {
-        slide.addEventListener('click', () => {
+        const card = slide.querySelector('.card_favoritos')
+        if (!card) return
+
+        card.addEventListener('click', () => {
             const url = slide.getAttribute('data-slug')
             if (url) {
                 window.location.href = `/blog-posts/${url}`
@@ -80,7 +83,7 @@ export const initDestinationSwiper = (container: HTMLElement) => {
         spaceBetween: 160,
         grabCursor: true,
         loop: true,
-        // loopAddBlankSlides: true, // Swiper 11 property, might need to check version
+        loopAddBlankSlides: true,
         watchSlidesProgress: true,
         on: {
             init(s) {
