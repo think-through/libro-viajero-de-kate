@@ -22,11 +22,15 @@ const hydrateIslands = async () => {
         )
     }
 
+    // Initialize Navbar
+    const { initNavBar } = await import('./interactions/navbar')
+    initNavBar()
+
     // 2. Vanilla Interactions (Swiper)
 
     const swiperDestinationsContainer = document.querySelector('.swiper.swiper-destinations')
     if (swiperDestinationsContainer instanceof HTMLElement) {
-        const { initDestinationSwiper } = await import('./interactions/swiperDestinations')
+        const { initDestinationSwiper } = await import('./interactions/swiperLatestDestinations')
         initDestinationSwiper(swiperDestinationsContainer)
     }
 
