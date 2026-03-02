@@ -1,4 +1,5 @@
 import Swiper from 'swiper'
+import { Navigation } from 'swiper/modules'
 import 'swiper/css'
 
 export const initLatestPostsSwiper = (container: HTMLElement) => {
@@ -9,6 +10,7 @@ export const initLatestPostsSwiper = (container: HTMLElement) => {
     if (!swiperElement) return null
 
     const swiper = new Swiper(swiperElement, {
+        modules: [Navigation],
         slidesPerView: 1.5,
         slidesPerGroup: 1,
         grabCursor: true,
