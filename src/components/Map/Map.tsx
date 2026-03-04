@@ -201,9 +201,12 @@ export const Map: React.FC = () => {
                     .setLngLat([dest.coords.lng, dest.coords.lat])
                     .addTo(map)
 
-                el.addEventListener('click', () => {
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation()
                     window.location.href = `/blog-posts/${blog.slug}`
                 })
+
+                el.addEventListener('mousedown', (e) => e.stopPropagation())
             })
         })
 
