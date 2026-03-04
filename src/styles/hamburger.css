@@ -107,7 +107,7 @@
     transition-duration: 0.22s;
     transition-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
 }
-. hamburger--spin-r .hamburger-inner::before {
+.hamburger--spin-r .hamburger-inner::before {
     transition:
         top 0.1s 0.25s ease-in,
         opacity 0.1s ease-in;

@@ -1,3 +1,13 @@
+# 🟢 CURRENT STATE [2026-03-04 15:30]
+
+**Goal:** Fix Map marker redirect issue.
+**Outcome:** Added `e.stopPropagation()` to the blog marker's click and mousedown events in `src/components/Map/Map.tsx`. This prevents the click from bubbling up to the map container and triggering the `countries-layer` click handler, which was causing unintended redirects to country pages. Also corrected a CSS syntax error in `src/styles/hamburger.css`.
+**Handoff:** The Map markers now correctly redirect to their respective blog posts without interference from the underlying country layer. The hamburger menu CSS is now also valid.
+
+---
+
+# 📜 PREVIOUS HISTORY
+
 # 🟢 CURRENT STATE [2026-02-27 21:26]
 
 **Goal:** Implement dynamic code-splitting for the Islands Architecture.
