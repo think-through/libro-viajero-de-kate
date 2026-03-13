@@ -1,6 +1,7 @@
 import Swiper from 'swiper'
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'
 import 'swiper/css'
+import '../styles/swiperDestinations.css'
 
 interface SwiperSlide extends HTMLElement {
     progress: number
@@ -28,26 +29,23 @@ const recenter = (swiper: Swiper) => {
     setTranslate(swiper)
 }
 
-const addClonesForLoopMode = (swiper: Swiper, container: HTMLElement) => {
+const addClonesIfNeeded = (container: HTMLElement) => {
     const wrapper = container.querySelector('.swiper-wrapper')
-    if (!wrapper) return
+    if (!wrapper) return 0
 
     const slides = wrapper.querySelectorAll('.swiper-slide')
-    const slidesPerView =
-        typeof swiper.params.slidesPerView === 'number' ? swiper.params.slidesPerView : 1.5
-    const slidesPerGroup =
-        typeof swiper.params.slidesPerGroup === 'number' ? swiper.params.slidesPerGroup : 1
+    const originalCount = slides.length
+    if (originalCount === 0) return 0
 
-    const notEnoughSlidesForLoopMode = slides.length <= slidesPerView * 2 + slidesPerGroup
-
-    if (notEnoughSlidesForLoopMode) {
-        const needed = Math.ceil(slidesPerView * 2)
+    const minSlides = 6
+    if (originalCount < minSlides) {
+        const needed = minSlides - originalCount
         for (let i = 0; i < needed; i++) {
-            const clone = slides[i % slides.length].cloneNode(true) as HTMLElement
+            const clone = slides[i % originalCount].cloneNode(true) as HTMLElement
             wrapper.appendChild(clone)
         }
-        swiper.update()
     }
+    return originalCount
 }
 
 const addEventListenerToSlides = (container: HTMLElement) => {
@@ -75,8 +73,25 @@ export const initDestinationSwiper = (container: HTMLElement) => {
 
     if (!swiperElement) return null
 
+    // Capture original count and add clones BEFORE Swiper initialization
+    // to ensure the loop module calculates the correct offsets.
+    const originalSlidesCount = addClonesIfNeeded(swiperElement)
+
     const swiper = new Swiper(swiperElement, {
         modules: [Navigation, Pagination, Autoplay],
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+            renderBullet: (index, className) => {
+                const isExtra =
+                    index >= originalSlidesCount ? ' swiper-pagination-bullet-extra' : ''
+                return `<span class="${className}${isExtra}"></span>`
+            },
+        },
         slidesPerView: 1.5,
         slidesPerGroup: 1,
         centeredSlides: true,
@@ -101,6 +116,20 @@ export const initDestinationSwiper = (container: HTMLElement) => {
             resize(s) {
                 recenter(s)
             },
+            slideChange(s) {
+                // Manually sync active class for bullets when on a manual clone
+                if (originalSlidesCount > 0) {
+                    const realIndex = s.realIndex % originalSlidesCount
+                    const bullets = s.pagination.bullets
+                    bullets.forEach((bullet, i) => {
+                        if (i === realIndex) {
+                            bullet.classList.add('swiper-pagination-bullet-active')
+                        } else if (i < originalSlidesCount) {
+                            bullet.classList.remove('swiper-pagination-bullet-active')
+                        }
+                    })
+                }
+            },
         },
         breakpoints: {
             0: {
@@ -123,7 +152,6 @@ export const initDestinationSwiper = (container: HTMLElement) => {
         },
     })
 
-    addClonesForLoopMode(swiper, swiperElement)
     addEventListenerToSlides(swiperElement)
 
     return swiper
