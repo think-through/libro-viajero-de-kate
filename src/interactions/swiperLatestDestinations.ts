@@ -33,17 +33,17 @@ const addClonesIfNeeded = (container: HTMLElement) => {
     const wrapper = container.querySelector('.swiper-wrapper')
     if (!wrapper) return 0
 
-    const slides = wrapper.querySelectorAll('.swiper-slide')
+    const slides = Array.from(wrapper.querySelectorAll('.swiper-slide'))
     const originalCount = slides.length
     if (originalCount === 0) return 0
 
-    const minSlides = 6
-    if (originalCount < minSlides) {
-        const needed = minSlides - originalCount
-        for (let i = 0; i < needed; i++) {
-            const clone = slides[i % originalCount].cloneNode(true) as HTMLElement
+    let currentSlides = wrapper.querySelectorAll('.swiper-slide')
+    while (currentSlides.length > 0 && currentSlides.length < 6) {
+        slides.forEach((slide) => {
+            const clone = slide.cloneNode(true) as HTMLElement
             wrapper.appendChild(clone)
-        }
+        })
+        currentSlides = wrapper.querySelectorAll('.swiper-slide')
     }
     return originalCount
 }

@@ -1,3 +1,11 @@
+# 🟢 CURRENT STATE [2026-03-12 23:08]
+
+**Goal:** Fix partial slide duplication in Swiper loop.
+**Outcome:** Refactored cloning logic to clone the entire set of slides instead of partial sets when the count is below 6. This prevents non-sequential loop behavior (e.g., 1,2,1,2).
+**Handoff:** Swiper loop sequence is now consistent and sequential.
+
+---
+
 # 🟢 CURRENT STATE [2026-03-12 23:01]
 
 **Goal:** Refine Swiper pagination, autoplay, and loop logic.
