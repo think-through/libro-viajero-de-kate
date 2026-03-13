@@ -17,7 +17,13 @@
             "description": "Implement dynamic imports and manual chunking to ensure Mapbox, React, and Swiper libraries are only loaded on demand.",
             "status": "passing",
             "test_command": "npm run build"
+        },
+        {
+            "name": "Swiper Pagination Micro-interaction",
+            "description": "Enable pagination bullets with a micro-interaction animation in the destinations swiper.",
+            "status": "passing",
+            "test_command": "npm run type-check"
         }
     ],
-    "current_status": "Island Code-Splitting Implemented"
+    "current_status": "Swiper Pagination Micro-interaction Enabled"
 }

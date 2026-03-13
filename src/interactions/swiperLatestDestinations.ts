@@ -1,6 +1,7 @@
 import Swiper from 'swiper'
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'
 import 'swiper/css'
+import '../styles/swiperDestinations.css'
 
 interface SwiperSlide extends HTMLElement {
     progress: number
@@ -77,6 +78,11 @@ export const initDestinationSwiper = (container: HTMLElement) => {
 
     const swiper = new Swiper(swiperElement, {
         modules: [Navigation, Pagination, Autoplay],
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+            dynamicBullets: false,
+        },
         slidesPerView: 1.5,
         slidesPerGroup: 1,
         centeredSlides: true,
